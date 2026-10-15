@@ -44,9 +44,11 @@
         ]
     },
     "dependencies": {
+        "config": "^5.0.1",
         "dotenv": "^18.0.4",
         "express": "^5.2.1",
         "http-errors": "^2.0.1",
+        "uuid": "^14.0.3",
         "winston": "^3.19.0"
     }
 }

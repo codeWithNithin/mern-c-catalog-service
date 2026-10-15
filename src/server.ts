@@ -1,10 +1,10 @@
 import app from './app.js'
-import { Config } from './config/env.js'
 import logger from './config/logger.js'
+import config from 'config'
 
 function startServer(): void {
     try {
-        const PORT: number = Number(Config.port)
+        const PORT: number = config.get('server.port') || 5502
 
         app.listen(PORT, () => {
             logger.info('server running at PORT', { port: PORT })
