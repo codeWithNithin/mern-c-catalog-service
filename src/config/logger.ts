@@ -3,7 +3,7 @@ import { Config } from './env.js'
 
 const logger = winston.createLogger({
     level: 'info',
-    defaultMeta: { service: 'auth-service' },
+    defaultMeta: { service: 'catalog-service' },
     format: winston.format.combine(
         winston.format.timestamp(),
         winston.format.json(),
