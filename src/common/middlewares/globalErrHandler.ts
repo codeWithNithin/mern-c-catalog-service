@@ -1,6 +1,6 @@
 import { HttpError } from 'http-errors'
 import { v4 as uuidv4 } from 'uuid'
-import { type NextFunction, type Request, type Response } from 'express'
+import type { NextFunction, Request, Response } from 'express'
 import logger from '../../config/logger.js'
 
 export const globalErrorHandler = (
