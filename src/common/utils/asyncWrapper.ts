@@ -7,6 +7,7 @@ const asyncWrapper = (requestHandler: RequestHandler) => {
             if (err instanceof Error) {
                 return next(createHttpError(500, err.message))
             }
+            console.log(err)
             return next(createHttpError(500, 'Internal server error'))
         })
     }
