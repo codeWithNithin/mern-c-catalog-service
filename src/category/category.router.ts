@@ -1,11 +1,24 @@
 import express from 'express'
 import CategoryController from './category.controller.js'
 import categoryValidator from './category.validator.js'
+import CategoryService from './category.service.js'
+import logger from '../config/logger.js'
+import asyncWrapper from '../common/utils/asyncWrapper.js'
+import authenticate from '../common/middlewares/authenticate.js'
+import { canAccess } from '../common/middlewares/canAccess.js'
+import { Roles } from '../common/constant/index.js'
 
 const categoryRouter = express.Router()
 
-const categoryController = new CategoryController()
+const categoryService = new CategoryService()
+const categoryCtrl = new CategoryController(categoryService, logger)
 
-categoryRouter.post('/', categoryValidator, categoryController.create)
+categoryRouter.post(
+    '/',
+    authenticate,
+    canAccess([Roles.ADMIN]),
+    categoryValidator,
+    asyncWrapper(categoryCtrl.create.bind(categoryCtrl)),
+)
 
 export default categoryRouter
