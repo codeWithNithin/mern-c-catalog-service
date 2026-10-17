@@ -1,8 +1,27 @@
-import categoryModel from './category.model.js'
+import CategoryModel from './category.model.js'
 import type { Category } from './category.types.js'
 
 export default class CategoryService {
     async create(category: Category) {
-        return await categoryModel.create(category)
+        return await CategoryModel.create(category)
+    }
+
+    async getAll() {
+        return await CategoryModel.find()
+    }
+
+    async getOne(categoryId: string) {
+        return await CategoryModel.findOne({ _id: categoryId })
+    }
+
+    async update(
+        categoryId: string,
+        updateData: Partial<Category>,
+    ): Promise<({ _id: string } & Category) | null> {
+        return await CategoryModel.findByIdAndUpdate(
+            categoryId,
+            { $set: updateData },
+            { new: true },
+        )
     }
 }

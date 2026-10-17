@@ -7,6 +7,7 @@ import asyncWrapper from '../common/utils/asyncWrapper.js'
 import authenticate from '../common/middlewares/authenticate.js'
 import { canAccess } from '../common/middlewares/canAccess.js'
 import { Roles } from '../common/constant/index.js'
+import updateCategoryValidator from './update-category.validator.js'
 
 const categoryRouter = express.Router()
 
@@ -19,6 +20,20 @@ categoryRouter.post(
     canAccess([Roles.ADMIN]),
     categoryValidator,
     asyncWrapper(categoryCtrl.create.bind(categoryCtrl)),
+)
+
+categoryRouter.patch(
+    '/:id',
+    authenticate,
+    canAccess([Roles.ADMIN]),
+    updateCategoryValidator,
+    asyncWrapper(categoryCtrl.update.bind(categoryCtrl)),
+)
+
+categoryRouter.get('/', asyncWrapper(categoryCtrl.index.bind(categoryCtrl)))
+categoryRouter.get(
+    '/:categoryId',
+    asyncWrapper(categoryCtrl.getOne.bind(categoryCtrl)),
 )
 
 export default categoryRouter
