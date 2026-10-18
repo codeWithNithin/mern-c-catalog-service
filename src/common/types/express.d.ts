@@ -7,6 +7,7 @@ declare global {
                 sub: string
                 id?: string
                 role: string
+                tenantId?: string
             }
         }
     }

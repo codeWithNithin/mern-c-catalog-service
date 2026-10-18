@@ -5,6 +5,8 @@ export const canAccess = (roles: string[]) => {
     return (req: Request, res: Response, next: NextFunction) => {
         const roleFromToken = req.auth!.role
 
+        console.log('auth data', req.auth)
+
         if (!roles.includes(roleFromToken)) {
             const error = createHttpError(
                 403,

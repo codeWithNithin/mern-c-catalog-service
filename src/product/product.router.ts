@@ -10,6 +10,7 @@ import fileUpload from 'express-fileupload'
 import createHttpError from 'http-errors'
 import logger from '../config/logger.js'
 import CloudinaryStorage from '../common/services/cloudinary.service.js'
+import updateProductValidator from './update-product.validator.js'
 
 const router = express.Router()
 
@@ -36,5 +37,39 @@ router.post(
     productValidator,
     asyncWrapper(productController.create.bind(productController)),
 )
+
+router.get(
+    '/:productId',
+    authenticate,
+    canAccess([Roles.ADMIN, Roles.MANAGER]),
+    asyncWrapper(productController.findById.bind(productController)),
+)
+
+router.delete(
+    '/:productId',
+    authenticate,
+    canAccess([Roles.ADMIN, Roles.MANAGER]),
+    asyncWrapper(productController.delete.bind(productController)),
+)
+
+router.put(
+    '/:productId',
+    authenticate,
+    canAccess([Roles.ADMIN, Roles.MANAGER]),
+    fileUpload({
+        limits: { fileSize: 500 * 1024 }, // 500kb
+        abortOnLimit: true,
+        useTempFiles: true,
+        tempFileDir: '/tmp/',
+        limitHandler: (req, res, next) => {
+            const error = createHttpError(400, 'File size exceeds the limit')
+            next(error)
+        },
+    }),
+    updateProductValidator,
+    asyncWrapper(productController.update.bind(productController)),
+)
+
+router.get('/', asyncWrapper(productController.find.bind(productController)))
 
 export default router
