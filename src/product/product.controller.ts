@@ -6,15 +6,18 @@ import type { UploadedFile } from 'express-fileupload'
 import { v4 as uuidv4 } from 'uuid'
 import type { Logger } from 'winston'
 import type CloudinaryStorage from '../common/services/cloudinary.service.js'
-import type { Filter, Product } from './product.types.js'
+import { ProductEvents, type Filter, type Product } from './product.types.js'
 import { Roles } from '../common/constant/index.js'
 import mongoose from 'mongoose'
+import type { MessageProducerBroker } from '../common/types/broker.js'
+import { mapToObject } from '../utils.js'
 
 class ProductController {
     constructor(
         private productService: ProductService,
         private logger: Logger,
         private storage: CloudinaryStorage,
+        private broker: MessageProducerBroker,
     ) {}
 
     async create(req: Request, response: Response, next: NextFunction) {
@@ -57,6 +60,23 @@ class ProductController {
                 isPublish,
                 image: imageName,
             })
+
+            await this.broker.sendMessage(
+                'product',
+                JSON.stringify({
+                    event_type: ProductEvents.PRODUCT_CREATE,
+                    data: {
+                        id: newProduct._id,
+                        // todo: fix the typescript error
+                        priceConfiguration: mapToObject(
+                            newProduct.priceConfiguration as unknown as Map<
+                                string,
+                                unknown
+                            >,
+                        ),
+                    },
+                }),
+            )
 
             response.status(200).json({ id: newProduct._id })
         } catch (err) {

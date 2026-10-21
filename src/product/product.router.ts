@@ -11,6 +11,7 @@ import createHttpError from 'http-errors'
 import logger from '../config/logger.js'
 import CloudinaryStorage from '../common/services/cloudinary.service.js'
 import updateProductValidator from './update-product.validator.js'
+import { createMessageProducerBroker } from '../common/factories/brokerFactory.js'
 
 const router = express.Router()
 
@@ -18,7 +19,14 @@ const productService = new ProductService()
 
 const storage = new CloudinaryStorage()
 
-const productController = new ProductController(productService, logger, storage)
+const broker = createMessageProducerBroker()
+
+const productController = new ProductController(
+    productService,
+    logger,
+    storage,
+    broker,
+)
 
 router.post(
     '/',
