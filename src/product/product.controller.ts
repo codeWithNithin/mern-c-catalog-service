@@ -188,9 +188,25 @@ class ProductController {
             image: imageName,
         }
 
-        await this.productService.findByIdAndUpdate(
+        const updatedProduct = await this.productService.findByIdAndUpdate(
             productId as string,
             product as unknown as Product,
+        )
+
+        await this.broker.sendMessage(
+            'product',
+            JSON.stringify({
+                event_type: ProductEvents.PRODUCT_UPDATE,
+                data: {
+                    id: updatedProduct._id,
+                    priceConfiguration: mapToObject(
+                        updatedProduct.priceConfiguration as unknown as Map<
+                            string,
+                            unknown
+                        >,
+                    ),
+                },
+            }),
         )
 
         res.json({ id: productId })
